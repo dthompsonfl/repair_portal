@@ -1,5 +1,15 @@
 # Repair Portal
 
+**Business problem:** A specialty instrument-repair operation needs a dependable record from intake and inspection through estimates, service work, quality checks and customer handoff.
+
+This public Frappe/ERPNext application models repair-shop workflows in code, including structured service records, permissions and scheduled operations. It reflects my work connecting hands-on repair operations to practical business systems.
+
+**Inspect the source:** [App hooks and scheduled workflows](repair_portal/hooks.py) · [Repair-order permission checks](repair_portal/repair_portal/permissions/repair_order.py) · [Service architecture](docs/ARCHITECTURE_SERVICES.md).
+
+**Project status and contribution:** Public implementation source and setup guidance are available. I directed and reviewed project-based development, including AI-assisted work, but do not claim every line was manually authored or that all documented modules are production-certified. The [MIT license](license.txt) is included. Installation and end-to-end operational behavior have not been independently tested in this portfolio review.
+
+---
+
 Comprehensive documentation for the `repair_portal` Frappe app: modules, doctypes, dev flow, and conventions.
 
 ## Overview
@@ -623,9 +633,9 @@ Below is a complete directory of all modules and their doctypes:
 
 **DocTypes (3)**:
 
-- **Pulse Update** - [Documentation](repair_portal/repair_portal/doctype/pulse_update/README.md)
-- **Qa Checklist Item** - [Documentation](repair_portal/repair_portal/doctype/qa_checklist_item/README.md)
-- **Technician** - [Documentation](repair_portal/repair_portal/doctype/technician/README.md)
+- **Pulse Update** - [Documentation](repair_portal/repair/doctype/pulse_update/README.md)
+- **Qa Checklist Item** - [Documentation](repair_portal/qa/doctype/qa_checklist_item/README.md)
+- **Technician** - [Documentation](repair_portal/repair/doctype/technician/README.md)
 
 ### Service Planning
 
@@ -655,8 +665,8 @@ Below is a complete directory of all modules and their doctypes:
 
 **DocTypes (2)**:
 
-- **Delivery Note** - [Documentation](repair_portal/stock/doctype/delivery_note/README.md)
-- **Stock Entry** - [Documentation](repair_portal/stock/doctype/stock_entry/README.md)
+- **Delivery Note** - [Source](repair_portal/stock/doctype/delivery_note/delivery_note.py)
+- **Stock Entry** - [Source](repair_portal/stock/doctype/stock_entry/stock_entry.py)
 
 ### Tools
 
