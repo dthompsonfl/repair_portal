@@ -150,14 +150,13 @@ jobs:
           pip install semgrep==1.75.0
 
       - name: Run Semgrep
-        env:
-          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
         run: |
-          if [ -n "$SEMGREP_APP_TOKEN" ]; then
-            semgrep ci --config "p/ci" --config "p/r2c-security-audit" --output semgrep.sarif --sarif
-          else
-            semgrep scan --config "p/ci" --config "p/r2c-security-audit" --output semgrep.sarif --sarif
-          fi
+          # Semgrep CI with an auth token rejects explicit --config, exits 0,
+          # and leaves no SARIF to upload. Use the same explicit rules in both
+          # authenticated and unauthenticated runs, and block on scan errors.
+          semgrep scan --config "p/ci" --config "p/r2c-security-audit" \
+            --sarif --output semgrep.sarif --error --no-suppress-errors
+          test -s semgrep.sarif
 
       - name: Upload Semgrep SARIF
         if: always()
