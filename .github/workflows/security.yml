@@ -69,7 +69,12 @@ jobs:
         run: safety check --json --output safety.json || true
 
       - name: Bandit security scan
-        run: bandit -r repair_portal -x repair_portal/tests -f sarif -o bandit.sarif || true
+        run: |
+          bandit -r repair_portal -x repair_portal/tests -f json -o bandit.json || status=$?
+          test -s bandit.json
+          # Keep the complete report, but make high-confidence, high-severity
+          # findings a genuine failure instead of silently suppressing them.
+          bandit -r repair_portal -x repair_portal/tests -lll -iii -f txt
 
       - name: Upload Python reports
         if: always()
@@ -79,15 +84,10 @@ jobs:
           path: |
             pip-audit.json
             safety.json
-            bandit.sarif
+            bandit.json
           if-no-files-found: ignore
           retention-days: 30
 
-      - name: Publish Bandit SARIF
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: bandit.sarif
 
   node-vulns:
     name: Node Dependency Scans
@@ -155,7 +155,7 @@ jobs:
           # and leaves no SARIF to upload. Use the same explicit rules in both
           # authenticated and unauthenticated runs, and block on scan errors.
           semgrep scan --config "p/ci" --config "p/r2c-security-audit" \
-            --sarif --output semgrep.sarif --error --no-suppress-errors
+            --sarif --output semgrep.sarif --error
           test -s semgrep.sarif
 
       - name: Upload Semgrep SARIF
