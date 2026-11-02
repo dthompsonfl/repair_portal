@@ -39,12 +39,12 @@ jobs:
           echo "version=${TAG_VERSION}" >> $GITHUB_OUTPUT
 
           INIT_VERSION=$(python - <<'PY'
-from pathlib import Path
-import re
-match = re.search(r"__version__\s*=\s*['\"]([^'\"]+)['\"]", Path("repair_portal/__init__.py").read_text())
-print(match.group(1) if match else "")
-PY
-)
+          from pathlib import Path
+          import re
+          match = re.search(r"__version__\s*=\s*['\"]([^'\"]+)['\"]", Path("repair_portal/__init__.py").read_text())
+          print(match.group(1) if match else "")
+          PY
+          )
           if [ -z "$INIT_VERSION" ]; then
             echo "Unable to determine __version__ from repair_portal/__init__.py"
             exit 1
@@ -83,20 +83,20 @@ PY
           VERSION: ${{ needs.prepare.outputs.version }}
         run: |
           python - <<'PY'
-import pathlib
-import re
-import os
-version = os.environ["VERSION"]
-changelog = pathlib.Path("CHANGELOG.md").read_text()
-pattern = re.compile(rf"## \[{re.escape(version)}\](.*?)(?=\n## \[|\Z)", re.DOTALL)
-match = pattern.search(changelog)
-notes = match.group(0) if match else f"## [{version}]\n\nNo detailed changelog available."
-path = pathlib.Path("dist/RELEASE_NOTES.md")
-path.parent.mkdir(parents=True, exist_ok=True)
-path.write_text(notes.strip() + "\n")
-with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as fh:
-    fh.write(f"notes_path={path}\n")
-PY
+          import pathlib
+          import re
+          import os
+          version = os.environ["VERSION"]
+          changelog = pathlib.Path("CHANGELOG.md").read_text()
+          pattern = re.compile(rf"## \[{re.escape(version)}\](.*?)(?=\n## \[|\Z)", re.DOTALL)
+          match = pattern.search(changelog)
+          notes = match.group(0) if match else f"## [{version}]\n\nNo detailed changelog available."
+          path = pathlib.Path("dist/RELEASE_NOTES.md")
+          path.parent.mkdir(parents=True, exist_ok=True)
+          path.write_text(notes.strip() + "\n")
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as fh:
+              fh.write(f"notes_path={path}\n")
+          PY
 
       - name: Upload release notes artifact
         uses: actions/upload-artifact@v4
