@@ -294,8 +294,18 @@ jobs:
           path: test-artifacts
           retention-days: 30
 
+      - name: Check Codecov credential availability
+        id: codecov-token
+        if: success()
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          if [ -n "$CODECOV_TOKEN" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Upload coverage to Codecov
-        if: success() && secrets.CODECOV_TOKEN != ''
+        if: success() && steps.codecov-token.outputs.available == 'true'
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
