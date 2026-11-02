@@ -109,17 +109,13 @@ jobs:
       - name: npm audit
         run: npm audit --json > npm-audit.json || true
 
-      - name: Retire.js scan
-        uses: actions/checkout@v4
-        with:
-          repository: RetireJS/retire.js
-          path: retire-src
-        continue-on-error: true
-
       - name: Run retire.js
         run: |
-          npm install --prefix retire-src
-          npx --prefix retire-src retire --path . --outputformat json --outputpath retire-report.json || true
+          # Install the published CLI, not a checkout with no root package.json.
+          # Findings remain report-only as in the existing workflow; failure
+          # to produce an actual report is not silently accepted.
+          npx --yes --package=retire retire --path . --outputformat json --outputpath retire-report.json || status=$?
+          test -s retire-report.json
 
       - name: Upload Node reports
         if: always()
